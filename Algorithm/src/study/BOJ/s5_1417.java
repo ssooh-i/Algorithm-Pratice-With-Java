@@ -17,7 +17,7 @@ public class s5_1417 {
 
 		// 높은 숫자가 우선순위인 int형 우선순위 큐 선언
 		PriorityQueue<Integer> q = new PriorityQueue<>(Collections.reverseOrder());
-		int A = 0;
+		int A = 0;//다솜이 표 자리
 		for (int i = 0; i < N; i++) {
 			if (i == 0) {
 				A = Integer.parseInt(br.readLine());
