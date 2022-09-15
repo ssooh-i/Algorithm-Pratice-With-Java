@@ -7,71 +7,60 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 //미로탐색
-
 public class s1_2178 {
-	static int N, M;
+
 	static int[][] map;
+	static int n;
+	static int m;
 	static boolean[][] visited;
-	static int[] dx = { -1, 1, 0, 0 };
-	static int[] dy = { 0, 0, -1, 1 };
-	static int lenCnt;
-	static int min;
+	static int[] dy = { -1, 1, 0, 0 }; // 상하 방향배열, n
+	static int[] dx = { 0, 0, -1, 1 }; // 좌우 방향배열, m
 
-	static void BFS(int y, int x, int len) {
-		Queue<Point> q = new LinkedList<Point>();
+	public static void BFS(int y, int x) {
+		Queue<int[]> q = new LinkedList<>();
+		q.add(new int[] { y, x });
+
 		while (!q.isEmpty()) {
-			Point point = q.poll();
+			int now[] = q.poll();
+			int nowY = now[0];
+			int nowX = now[1];
 
-			for (int i = 0; i < 4; i++) {// 4방탐색
-				int nextX = point.x + dx[i];
-				int nextY = point.y + dy[i];
+			for (int i = 0; i < 4; i++) {
+				int nextY = nowY + dy[i];
+				int nextX = nowX + dx[i];
 
-				// 범위 체크
-				if (0 <= nextX && nextX < M && 0 <= nextY && nextY < N) {
-					if (map[nextY][nextX] == 1 && !visited[nextY][nextX]) {
-						visited[nextY][nextX] = true; 
-						BFS(nextY, nextX, len + 1);
-					}
-				}
+				if (nextX < 0 || nextX >= m || nextY < 0 || nextY >= n)
+					continue;
+				if (visited[nextY][nextX] || map[nextY][nextX] == 0)
+					continue;
+
+				q.add(new int[] { nextY, nextX });
+				map[nextY][nextX] = map[nowY][nowX] + 1;//들어간 값에서 +1
+				visited[nextY][nextX] = true;
 			}
 		}
-
 	}
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		n = Integer.parseInt(st.nextToken());//Y
+		m = Integer.parseInt(st.nextToken());//X
 
-		N = Integer.parseInt(st.nextToken()); // Y
-		M = Integer.parseInt(st.nextToken()); // X
-		map = new int[N][M];
-		visited = new boolean[N][M];
+		map = new int[n][m]; // 지도 배열 선언
+		visited = new boolean[n][m];//지도 배열만큼 방문할 배열 선언
 
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < n; i++) {// 입력받기
 			String str = br.readLine();
-			for (int j = 0; j < M; j++) {
+			for (int j = 0; j < m; j++) {
 				map[i][j] = str.charAt(j) - '0';
 			}
 		}
-		BFS(0, 0, 1);
-//		q = new LinkedList<>();
-//		q.add(new Point(0,0,1));
-		lenCnt = 1;
-		min = Integer.MAX_VALUE;
 
+		visited[0][0] = true; // 처음 들어가는 값 true만들어주기
+		BFS(0, 0);
+		System.out.println(map[n - 1][m - 1]);//배열 마지막에 들어간 값 출력
 	}
 
-}
-
-//포인트 클래스로 포인트 객체만들기
-class Point {
-	int y;
-	int x;
-	int len;
-
-	Point(int y, int x, int len) {// 좌표값과 지금 이동한 칸수
-		this.y = y;
-		this.x = x;
-		this.len = len;
-	}
 }
