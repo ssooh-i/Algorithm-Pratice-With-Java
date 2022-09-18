@@ -18,25 +18,22 @@ public class s4_1764 {
 		int M = Integer.parseInt(st.nextToken());//보지 못한 사람
 		
 		
-		Set<String> set = new HashSet<>();
+		Set<String> set = new HashSet<>();//set에 값 다 넣어주기
 		for(int i = 0; i<N; i++) {
 			set.add(br.readLine());
 		}
 		
-		ArrayList<String> list = new ArrayList<>();
+		
+		ArrayList<String> list = new ArrayList<>();//듣도보도 못한 사람 들어갈 리스트
+		//리스트를 쓴 이유는 사전순으로 정렬하기 위해 Collections.sort쓰려고
 		for(int i = 0; i<M; i++) {
 			String s = br.readLine();
-			if(set.contains(s)) {
+			if(set.contains(s)) {//set 안에 포함되어 있으면 리스트에 추가
 				list.add(s);
 			}
 		}
 		
-//		System.out.println(N+"," +M);
-//		System.out.println("N_list:"+ Arrays.toString(N_list));
-//		System.out.println("M_list:"+ Arrays.toString(M_list));
-		
-		
-		Collections.sort(list);
+		Collections.sort(list);//리스트 형태를 사전순으로 정렬
 		
 		System.out.println(list.size());
 		for(String s : list) {
