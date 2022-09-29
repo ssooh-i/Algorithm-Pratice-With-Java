@@ -29,8 +29,7 @@ public class s1_1149 {
 		}
 		
 		//N-1의 RGB중에 젤 최소값 출력
-		System.out.println(Math.min(Math.min(RGB[N-1][0], RGB[N-1][1]),RGB[N-1][2]));
-		
+		System.out.println(Math.min(Math.min(RGB[N-1][0], RGB[N-1][1]),RGB[N-1][2]));	
 	}
 
 }
