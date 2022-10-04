@@ -68,6 +68,7 @@ public class g5_5430 {
 			
 			sb.append("[");
 			for (int aa = 0; aa < arr.size(); aa++) {
+				
 				sb.append(arr.pollFirst());
 				if((arr.size())-1 == aa) {
 					continue;
