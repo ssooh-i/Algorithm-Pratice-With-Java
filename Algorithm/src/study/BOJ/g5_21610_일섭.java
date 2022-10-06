@@ -3,15 +3,17 @@ package study.BOJ;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-//마법사 상어와 비바라기
-public class g5_21610 {
+public class g5_21610_일섭 {
+
 	static int[] dy = { 0, -1, -1, -1, 0, 1, 1, 1 };
 	static int[] dx = { -1, -1, 0, 1, 1, 1, 0, -1 };
 	static int N, M;
+	static int[][] map;
+	static boolean[][] visited;
+	static List<Cloud> clouds;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -20,7 +22,7 @@ public class g5_21610 {
 		N = Integer.parseInt(st.nextToken());// map크기
 		M = Integer.parseInt(st.nextToken());// 명령어 수
 
-		int[][] map = new int[N][N];
+		map = new int[N][N];
 
 		for (int i = 0; i < N; i++) { // map초기값 입력받기
 			st = new StringTokenizer(br.readLine());
@@ -29,7 +31,7 @@ public class g5_21610 {
 			}
 		}
 
-		List<Cloud> clouds = new ArrayList<>();
+		clouds = new ArrayList<>();
 
 		// 초기 구름 위치 추가
 		clouds.add(new Cloud(N - 1, 0));
@@ -39,20 +41,13 @@ public class g5_21610 {
 
 		for (int i = 0; i < M; i++) { // 명령어 입력받기
 			st = new StringTokenizer(br.readLine());
-			int[] command = new int[2];
-			command[0] = Integer.parseInt(st.nextToken()) - 1;// d, 이동 번호, 1부터 시작해서 -1해준다
-			command[1] = Integer.parseInt(st.nextToken());// s, 이동 횟수 = 거리
+			int dir = Integer.parseInt(st.nextToken()) - 1;// d, 이동 번호, 1부터 시작해서 -1해준다
+			int dist = Integer.parseInt(st.nextToken());// s, 이동 횟수 = 거리
 
-			boolean[][] visited = new boolean[N][N];// 구름이 있던 곳 체크할 배열
+			visited = new boolean[N][N];// 구름이 있던 곳 체크할 배열
 
-			int size = clouds.size();
-			// 명령받고 바로 실행시켜주기
-			for (int j = 0; j < size; j++) { // 구름 이동
-				clouds.get(j).moveCloud(command[0], command[1], N, map, visited);
-			}
-			for (int j = 0; j < size; j++) { // 구름 자리 물복사 버그
-				clouds.get(j).waterCopy(map, N);
-			}
+			moveCloud(dir, dist, N);
+			waterCopy();
 
 			// 새로운 구름 만들 곳
 			clouds = new ArrayList<>();
@@ -86,51 +81,57 @@ public class g5_21610 {
 
 	}
 
-	static class Cloud {
-		int y;
-		int x;
-		Cloud(int y, int x) {
-			this.y = y;
-			this.x = x;
-		}
-
-		// 구름 이동
-		void moveCloud(int d, int s, int N, int[][] map, boolean[][] visited) {
+	// 구름 이동
+	static void moveCloud(int d, int s, int N) {
+		for (int j = 0; j < clouds.size(); j++) { // 구름 이동
+			Cloud c = clouds.get(j);
 			// d방향으로 s번 이동
 			for (int i = 0; i < s; i++) {
-				y = y + dy[d]; // nextY로 안 만든 이유는 그냥 대입하려고
-				x = x + dx[d];
+				c.y = c.y + dy[d]; // nextY로 안 만든 이유는 그냥 대입하려고
+				c.x = c.x + dx[d];
 
 				// 경계 밖으로 넘어가면 반대방향으로 보내기
-				if (y < 0) {
-					y += N;
-				} else if (y >= N) {
-					y -= N;
+				if (c.y < 0) {
+					c.y += N;
+				} else if (c.y >= N) {
+					c.y -= N;
 				}
-				if (x < 0) {
-					x += N;
-				} else if (x >= N) {
-					x -= N;
+				if (c.x < 0) {
+					c.x += N;
+				} else if (c.x >= N) {
+					c.x -= N;
 				}
 			}
-			visited[y][x] = true;// s번 만큼 이동하고 구름이 있는 자리 체크
-			map[y][x] += 1; // 비 온 뒤 바구니 물 양+1
+			visited[c.y][c.x] = true;// s번 만큼 이동하고 구름이 있는 자리 체크
+			map[c.y][c.x] += 1; // 비 온 뒤 바구니 물 양+1
 		}
+	}
 
-		// 물복사버그
-		void waterCopy(int[][] map, int N) {// 지금 위치에서 있는 대각선에 물이 들어있으면 +1
-			// 대각선 1,3,5,7
+	// 물복사버그
+	static void waterCopy() {// 지금 위치에서 있는 대각선에 물이 들어있으면 +1
+		// 대각선 1,3,5,7
+		for (int j = 0; j < clouds.size(); j++) {
+			Cloud c = clouds.get(j);
 			for (int i = 1; i < 8; i += 2) {
-				int nextY = y + dy[i];// 다음 위치를 보고 현재자리에 더해줘야하니까 대입X
-				int nextX = x + dx[i];
+				int nextY = c.y + dy[i];// 다음 위치를 보고 현재자리에 더해줘야하니까 대입X
+				int nextX = c.x + dx[i];
 				if (nextY < 0 || nextX < 0 || nextY >= N || nextX >= N) {// 범위체크
 					continue;
 				}
 				if (map[nextY][nextX] != 0) {// 물이 있으면 물 +1
-					map[y][x]++;
+					map[c.y][c.x]++;
 				}
 			}
+		}
+	}
 
+	static class Cloud {
+		int y;
+		int x;
+
+		Cloud(int y, int x) {
+			this.y = y;
+			this.x = x;
 		}
 	}
 
